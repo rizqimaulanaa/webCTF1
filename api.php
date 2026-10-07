@@ -5,18 +5,18 @@ header('Content-Type: application/json');
 if(isset($_GET['resi'])) {
     $resi = $_GET['resi'];
     
-    // Mengecek apakah resi valid
-    if($resi === 'TRN-123') {
+    // Logika Pintar: Jika resi diawali dengan teks "TRN-", maka anggap valid
+    if(strpos($resi, 'TRN-') === 0) {
         echo json_encode([
             "status" => "success", 
             "kurir" => "Taruna Express",
-            "posisi" => "Paket sedang transit di Gudang Pusat (Jakarta)",
+            "posisi" => "Paket sedang dikemas di Gudang Logistik (Jakarta).",
             "update_terakhir" => date("Y-m-d H:i:s")
         ]);
     } else {
         echo json_encode([
             "status" => "error", 
-            "pesan" => "Nomor resi tidak ditemukan di database kami."
+            "pesan" => "Nomor resi tidak valid atau tidak ditemukan di database kami."
         ]);
     }
 } else {
