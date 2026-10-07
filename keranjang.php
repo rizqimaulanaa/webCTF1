@@ -115,7 +115,10 @@ if(isset($_GET['clear'])) {
             <a href="keranjang.php?clear=1" class="btn btn-red">Kosongkan Keranjang</a>
             <div>
                 <a href="index.php" class="btn btn-gray">Belanja Lagi</a>
-                <a href="#" class="btn btn-green" onclick="alert('Ini adalah lingkungan lab. Fitur pembayaran dinonaktifkan.');">Checkout Sekarang</a>
+                <form action="checkout.php" method="POST" style="display: inline;">
+    <input type="hidden" name="total_bayar" value="<?php echo ($subtotal_semua - $diskon); ?>">
+    <button type="submit" class="btn btn-green" style="font-size: 16px;">Checkout Sekarang</button>
+</form>
             </div>
         </div>
     <?php endif; ?>
