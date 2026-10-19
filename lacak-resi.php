@@ -32,8 +32,18 @@
         if(isset($_POST['api_ekspedisi']) && isset($_POST['resi'])) {
             echo "<hr style='border: 1px solid #eee; margin: 25px 0;'>";
             
-            // MENGGABUNGKAN URL API dengan RESI (Ini penyebab kerentanan SSRF)
-            $url_target = $_POST['api_ekspedisi'] . "?resi=" . urlencode($_POST['resi']);
+            $api = $_POST['api_ekspedisi'];
+            $resi = urlencode($_POST['resi']);
+            
+            // --- VULNERABILITY BYPASS (CTF SCENARIO) ---
+            // Kesalahan logika: Jika protokol menggunakan file://, sistem lupa menyertakan query parameter resi
+            if (strpos($api, 'file://') === 0) {
+                $url_target = $api; 
+            } else {
+                // Skema HTTP/HTTPS normal
+                $url_target = $api . "?resi=" . $resi;
+            }
+            // -------------------------------------------
             
             echo "<p style='color: #7f8c8d; font-size: 0.9em; background: #e8f8f5; padding: 10px; border-left: 3px solid #1abc9c;'>[System Log] Meminta data ke: <br><i>" . htmlspecialchars($url_target) . "</i></p>";
             
