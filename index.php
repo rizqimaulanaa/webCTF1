@@ -48,7 +48,6 @@ if(isset($_SESSION['keranjang'])) {
         .product-card { border: 1px solid #ddd; padding: 15px; border-radius: 5px; text-align: center; width: 30%; transition: transform 0.2s; }
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
-        #search-result { margin-top: 20px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #1abc9c; display: none; }
         .alert-success { background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center;}
     </style>
 </head>
@@ -71,13 +70,22 @@ if(isset($_SESSION['keranjang'])) {
 
     <h2>Katalog Produk</h2>
     
-    <!-- Fitur Search (Target DOM Invader) -->
+    <!-- Fitur Search (Target Reflected XSS) -->
     <form method="GET" action="index.php">
         <input type="text" name="q" id="keyword" class="search-box" placeholder="Cari perlengkapan taktis...">
         <button type="submit" class="btn">Cari</button>
     </form>
 
-    <div id="search-result"></div>
+    <?php
+    // CELAH REFLECTED XSS
+    // PHP mengambil parameter 'q' dan langsung mencetaknya tanpa htmlspecialchars()
+    if(isset($_GET['q']) && $_GET['q'] !== '') {
+        $query = $_GET['q']; 
+        echo "<div style='margin-top: 20px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #1abc9c;'>";
+        echo "Menampilkan hasil pencarian untuk barang: <b>" . $query . "</b>";
+        echo "</div>";
+    }
+    ?>
 
     <div class="products">
         <?php foreach($katalog as $id => $item): ?>
@@ -91,17 +99,6 @@ if(isset($_SESSION['keranjang'])) {
         <?php endforeach; ?>
     </div>
 </div>
-
-<!-- Script Rentan DOM XSS (Jangan Dihapus) -->
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q');
-    if(query) {
-        let resultDiv = document.getElementById('search-result');
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = "Menampilkan hasil pencarian untuk barang: <b>" + query + "</b>";
-    }
-</script>
 
 </body>
 </html>
